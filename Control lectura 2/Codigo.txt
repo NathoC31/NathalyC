@@ -1,0 +1,158 @@
+import java.util.HashMap;
+
+// Clase Estudiante
+class Estudiante {
+    private String nombre;
+    private int curso;
+    private Notas notas;
+    private Asistencia asistencia;
+    private Proyecto proyecto;
+
+    public Estudiante(String nombre, int curso, int totalClases, String tituloProyecto) {
+        this.nombre = nombre;
+        this.curso = curso;
+        this.notas = new Notas();
+        this.asistencia = new Asistencia(totalClases);
+        this.proyecto = new Proyecto(tituloProyecto);
+    }
+
+    public void registrarEstudiante() {
+        System.out.println("Estudiante " + nombre + " registrado en el curso " + curso);
+    }
+
+    public String consultarInformacion() {
+        return "Nombre: " + nombre + ", Curso: " + curso;
+    }
+
+    public Notas getNotas() {
+        return notas;
+    }
+
+    public Asistencia getAsistencia() {
+        return asistencia;
+    }
+
+    public Proyecto getProyecto() {
+        return proyecto;
+    }
+}
+
+// Clase Notas
+class Notas {
+    private HashMap<String, Double> calificaciones;
+
+    public Notas() {
+        this.calificaciones = new HashMap<>();
+    }
+
+    public void agregarNota(String materia, double calificacion) {
+        calificaciones.put(materia, calificacion);
+    }
+
+    public double calcularPromedio() {
+        double total = 0;
+        for (double nota : calificaciones.values()) {
+            total += nota;
+        }
+        return calificaciones.size() > 0 ? total / calificaciones.size() : 0;
+    }
+}
+
+// Clase Asistencia
+class Asistencia {
+    private int diasAsistidos;
+    private int totalClases;
+
+    public Asistencia(int totalClases) {
+        this.diasAsistidos = 0;
+        this.totalClases = totalClases;
+    }
+
+    public void registrarAsistencia() {
+        if (diasAsistidos < totalClases) {
+            diasAsistidos++;
+        } else {
+            System.out.println("No se pueden registrar más asistencias.");
+        }
+    }
+
+    public double calcularPorcentaje() {
+        return (diasAsistidos / (double) totalClases) * 100;
+    }
+}
+
+// Clase Proyecto
+class Proyecto {
+    private String titulo;
+    private double calificacionProyecto;
+
+    public Proyecto(String titulo) {
+        this.titulo = titulo;
+        this.calificacionProyecto = 0;
+    }
+
+    public void calificarProyecto(double calificacion) {
+        this.calificacionProyecto = calificacion;
+    }
+
+    public double getCalificacionProyecto() {
+        return calificacionProyecto;
+    }
+
+    public String consultarProyecto() {
+        return "Proyecto: " + titulo + ", Calificación: " + calificacionProyecto;
+    }
+}
+
+// Clase Aprobación
+class Aprobacion {
+    private boolean estado;
+
+    public boolean verificarAprobacion(double promedio, double porcentajeAsistencia, double calificacionProyecto) {
+        if (promedio >= 60 && porcentajeAsistencia >= 75 && calificacionProyecto >= 70) {
+            estado = true;
+        } else {
+            estado = false;
+        }
+        return estado;
+    }
+
+    public String getEstado() {
+        return estado ? "Aprobado" : "No Aprobado";
+    }
+}
+
+// Clase Principal (Main)
+public class Main {
+    public static void main(String[] args) {
+        // Crear un estudiante
+        Estudiante estudiante = new Estudiante("Juan Pérez", 1, 20, "Sistema de Gestión");
+        estudiante.registrarEstudiante();
+        System.out.println(estudiante.consultarInformacion());
+
+        // Registrar notas
+        Notas notas = estudiante.getNotas();
+        notas.agregarNota("Matemáticas", 80);
+        notas.agregarNota("Historia", 70);
+        double promedio = notas.calcularPromedio();
+        System.out.println("Promedio de Notas: " + promedio);
+
+        // Registrar asistencia
+        Asistencia asistencia = estudiante.getAsistencia();
+        asistencia.registrarAsistencia();
+        asistencia.registrarAsistencia();
+        asistencia.registrarAsistencia();
+        double porcentajeAsistencia = asistencia.calcularPorcentaje();
+        System.out.println("Porcentaje de Asistencia: " + porcentajeAsistencia);
+
+        // Calificar proyecto
+        Proyecto proyecto = estudiante.getProyecto();
+        proyecto.calificarProyecto(85);
+        System.out.println(proyecto.consultarProyecto());
+
+        // Verificar aprobación
+        Aprobacion aprobacion = new Aprobacion();
+        boolean estado = aprobacion.verificarAprobacion(promedio, porcentajeAsistencia, proyecto.getCalificacionProyecto());
+        System.out.println("Estado del estudiante: " + aprobacion.getEstado());
+    }
+}
